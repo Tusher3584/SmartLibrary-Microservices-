@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27018:27017"
+    networks:
+      - smartlibrary-net
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    ports:
+      - "5000:5000"
+    networks:
+      - smartlibrary-net
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/userdb
+
+  book-service:
+    build:
+      context: ./book-service
+    container_name: book-service
+    ports:
+      - "5001:5001"
+    networks:
+      - smartlibrary-net
+    environment:
+      - PORT=5001
+      - MONGODB_URI=mongodb://mongodb:27017/bookdb
+
+  loan-service:
+    build:
+      context: ./loan-service
+    container_name: loan-service
+    ports:
+      - "5002:5002"
+    networks:
+      - smartlibrary-net
+    environment:
+      - PORT=5002
+      - MONGODB_URI=mongodb://mongodb:27017/loandb
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - smartlibrary-net
+
+volumes:
+  mongodb_data:
+
+networks:
+  smartlibrary-net:
+    driver: bridge

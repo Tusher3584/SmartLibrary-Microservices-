@@ -10,10 +10,7 @@ app.use('/api/books', bookRoutes);
 const PORT = process.env.PORT || 5001;
 const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(MONGODB_URI)
 .then(() => {
   console.log('✅ Connected to MongoDB (Book Service)');
   app.listen(PORT, () => {
